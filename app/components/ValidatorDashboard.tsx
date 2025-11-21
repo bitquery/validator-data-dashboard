@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import HubSpotFormEmbed from './HubSpotFormEmbed';
 
 interface TransactionData {
   Block: {
@@ -41,12 +42,6 @@ export default function ValidatorDashboard({ validatorAddress }: ValidatorDashbo
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    message: '',
-  });
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -98,9 +93,7 @@ export default function ValidatorDashboard({ validatorAddress }: ValidatorDashbo
     setShowForm(true);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleCSVDownload = () => {
     // Create CSV content
     const headers = ['Block Time', 'Post Balance', 'Pre Balance', 'Rewards in ETH', 'Rewards in USD', 'Transaction Hash'];
     const csvRows = [headers.join(',')];
@@ -131,18 +124,15 @@ export default function ValidatorDashboard({ validatorAddress }: ValidatorDashbo
     
     // Close form after download
     setShowForm(false);
-    // Reset form
-    setFormData({ name: '', email: '', company: '', message: '' });
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleFormSubmitted = () => {
+    // When HubSpot form is submitted, trigger CSV download
+    handleCSVDownload();
   };
 
   const closeForm = () => {
     setShowForm(false);
-    setFormData({ name: '', email: '', company: '', message: '' });
   };
 
   const formatBalance = (balance: string) => {
@@ -433,102 +423,17 @@ export default function ValidatorDashboard({ validatorAddress }: ValidatorDashbo
                 </button>
               </div>
               <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2">
-                Please complete the form below with as much detail as possible.
+                Please complete the form below to download the CSV file.
               </p>
             </div>
 
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                >
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Your full name"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                >
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="company"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                >
-                  Company Name
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleFormChange}
-                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Your company name"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                >
-                  Use Case Description <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleFormChange}
-                  required
-                  rows={6}
-                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  placeholder="Please describe your use case and requirements..."
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                <button
-                  type="button"
-                  onClick={closeForm}
-                  className="px-6 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  Download CSV
-                </button>
-              </div>
-            </form>
+            <div className="p-6">
+              <HubSpotFormEmbed 
+                formId="81b4aece-eb68-4634-8d9b-fdfe4a26b624"
+                portalId="6314272"
+                onFormSubmitted={handleFormSubmitted}
+              />
+            </div>
           </div>
         </div>
       )}

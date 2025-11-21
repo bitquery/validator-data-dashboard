@@ -24,3 +24,39 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* HubSpot Form Styling */
+.hubspot-form-container {
+  min-height: 400px;
+}
+
+.hubspot-form-container form {
+  color: inherit;
+}
+
+.hubspot-form-container .hs-form-field label {
+  color: inherit;
+}
+
+.hubspot-form-container .hs-input,
+.hubspot-form-container .hs-form-textarea {
+  color: inherit;
+  background-color: inherit;
+}
+
+/* Ensure form is visible in dark mode */
+@media (prefers-color-scheme: dark) {
+  .hubspot-form-container .hs-input,
+  .hubspot-form-container .hs-form-textarea,
+  .hubspot-form-container select {
+    background-color: rgb(39 39 42);
+    color: rgb(244 244 245);
+    border-color: rgb(63 63 70);
+  }
+  
+  .hubspot-form-container .hs-input:focus,
+  .hubspot-form-container .hs-form-textarea:focus {
+    border-color: rgb(59 130 246);
+    outline: none;
+  }
+}
